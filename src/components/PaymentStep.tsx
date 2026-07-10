@@ -168,15 +168,7 @@ export default function PaymentStep() {
               </div>
             </div>
 
-            <div className="flex gap-3 bg-white border border-orange-200 rounded-xl p-4 text-xs text-slate-600 leading-relaxed">
-              <AlertCircle className="w-5 h-5 text-[#FF6D00] shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <p className="font-bold text-slate-800">Instrução importante:</p>
-                <p className="italic">
-                  «Após efetuar o pagamento, envie o comprovativo através do WhatsApp para que possamos validar o pagamento e iniciar o processo da sua candidatura.»
-                </p>
-              </div>
-            </div>
+
 
             <div className="w-full">
               <button
@@ -199,9 +191,19 @@ export default function PaymentStep() {
                 <Send className="w-4 h-4" />
                 <span>Enviar Comprovativo pelo WhatsApp</span>
               </a>
-              <p className="text-[10px] text-slate-400 mt-2 text-center">
+              <p className="text-[10px] text-slate-400 mt-2 text-center mb-4">
                 Número de suporte técnico: +244 928 809 034
               </p>
+            </div>
+
+            <div className="flex gap-3 bg-white border border-orange-200 rounded-xl p-4 text-xs text-slate-600 leading-relaxed">
+              <AlertCircle className="w-5 h-5 text-[#FF6D00] shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold text-slate-800">Instrução importante:</p>
+                <p className="italic">
+                  «Após efetuar o pagamento, envie o comprovativo através do WhatsApp para que possamos validar o pagamento e iniciar o processo da sua candidatura.»
+                </p>
+              </div>
             </div>
 
             <div className="text-center pt-2">
