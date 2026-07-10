@@ -191,9 +191,6 @@ export default function PaymentStep() {
                 <Send className="w-4 h-4" />
                 <span>Enviar Comprovativo pelo WhatsApp</span>
               </a>
-              <p className="text-[10px] text-slate-400 mt-2 text-center mb-4">
-                Número de suporte técnico: +244 928 809 034
-              </p>
             </div>
 
             <div className="flex gap-3 bg-white border border-orange-200 rounded-xl p-4 text-xs text-slate-600 leading-relaxed">
