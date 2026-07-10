@@ -119,17 +119,15 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
   doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
   
-  doc.text(`Entidade: ${agendamento.entidadeMulticaixa}`, margin + 5, y + 13);
-  
   // Mask the reference to 928*****4 for the generated PDF document
   const cleanRef = agendamento.referenciaMulticaixa.replace(/\s/g, '');
   const maskedRef = cleanRef.length >= 9 
     ? `${cleanRef.slice(0, 3)}*****${cleanRef.slice(-1)}` 
     : '928*****4';
     
-  doc.text(`Referência: ${maskedRef}`, margin + 5, y + 19);
+  doc.text(`Referência: ${maskedRef}`, margin + 5, y + 14);
   doc.setFont('Helvetica', 'normal');
-  doc.text(`Valor total: 1.250,00 Kz`, margin + 5, y + 24);
+  doc.text(`Valor total: 1.250,00 Kz`, margin + 5, y + 20);
 
   y += 38;
 

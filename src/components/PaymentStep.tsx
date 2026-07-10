@@ -37,7 +37,7 @@ export default function PaymentStep() {
   };
 
   const getWhatsAppLink = () => {
-    const text = `Olá! Acabei de efetuar o agendamento da candidatura para o concurso público do Ministério do Interior no portal.%0A%0A*DADOS DE AGENDAMENTO:*%0A👤 *Nome:* ${encodeURIComponent(agendamento.nomeCompleto)}%0A📍 *Cidade:* ${encodeURIComponent(agendamento.cidade)}%0A📞 *Telefone:* ${encodeURIComponent(agendamento.telefone)}%0A💵 *Valor:* 1.250 Kz%0A%0A*DADOS DE PAGAMENTO:*%0A🎫 *Entidade:* ${agendamento.entidadeMulticaixa}%0A🎫 *Referência:* ${agendamento.referenciaMulticaixa}%0A%0AEnvio em anexo o comprovativo de pagamento para validação do agendamento and início da minha candidatura.`;
+    const text = `Olá! Acabei de efetuar o agendamento da candidatura para o concurso público do Ministério do Interior no portal.%0A%0A*DADOS DE AGENDAMENTO:*%0A👤 *Nome:* ${encodeURIComponent(agendamento.nomeCompleto)}%0A📍 *Cidade:* ${encodeURIComponent(agendamento.cidade)}%0A📞 *Telefone:* ${encodeURIComponent(agendamento.telefone)}%0A💵 *Valor:* 1.250 Kz%0A%0A*DADOS DE PAGAMENTO:*%0A🎫 *Referência:* ${agendamento.referenciaMulticaixa}%0A%0AEnvio em anexo o comprovativo de pagamento para validação do agendamento and início da minha candidatura.`;
     return `https://wa.me/244928809034?text=${text}`;
   };
 
@@ -77,7 +77,6 @@ export default function PaymentStep() {
             <div className="my-4 p-4 border border-slate-300 bg-slate-50 text-xs rounded-lg">
               <p className="font-bold text-center text-slate-800 mb-2">DADOS PARA PAGAMENTO MULTICAIXA</p>
               <div className="space-y-1.5">
-                <p><span className="text-slate-500 font-normal">Entidade:</span> {agendamento.entidadeMulticaixa}</p>
                 <p><span className="text-slate-500 font-normal">Referência:</span> {agendamento.referenciaMulticaixa}</p>
                 <p><span className="text-slate-500 font-normal">Valor:</span> 1.250 Kz</p>
               </div>
@@ -148,20 +147,6 @@ export default function PaymentStep() {
               </div>
 
               <div className="space-y-3.5 font-mono">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-slate-400">Entidade:</span>
-                  <div className="flex items-center gap-2 font-normal">
-                    <span className="text-white tracking-widest text-sm">{agendamento.entidadeMulticaixa}</span>
-                    <button 
-                      onClick={() => copyToClipboard(agendamento.entidadeMulticaixa, 'entity')}
-                      className="text-slate-400 hover:text-white transition-colors cursor-pointer p-1.5 rounded-lg hover:bg-slate-800"
-                      title="Copiar Entidade"
-                    >
-                      {copiedEntity ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-                </div>
-
                 <div className="flex justify-between items-center text-xs">
                   <span className="text-slate-400">Referência:</span>
                   <div className="flex items-center gap-2 font-normal">
