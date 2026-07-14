@@ -1,11 +1,20 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import HomeStep from './components/HomeStep';
-import ScheduleStep from './components/ScheduleStep';
-import PaymentStep from './components/PaymentStep';
+
+const HomeStep = lazy(() => import('./components/HomeStep'));
+const ScheduleStep = lazy(() => import('./components/ScheduleStep'));
+const PaymentStep = lazy(() => import('./components/PaymentStep'));
+
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-8 h-8 border-3 border-slate-200 border-t-[#FF6D00] rounded-full animate-spin"></div>
+    </div>
+  );
+}
 
 export default function App() {
   const location = useLocation();
@@ -20,15 +29,17 @@ export default function App() {
       {!isPaymentPage && <Header />}
 
       <main className="flex-1 w-full bg-white">
-        <AnimatePresence mode="wait">
-          <div key={location.pathname}>
-            <Routes location={location}>
-              <Route path="/" element={<HomeStep />} />
-              <Route path="/agendar" element={<ScheduleStep />} />
-              <Route path="/pagamento" element={<PaymentStep />} />
-            </Routes>
-          </div>
-        </AnimatePresence>
+        <Suspense fallback={<LoadingFallback />}>
+          <AnimatePresence mode="wait">
+            <div key={location.pathname}>
+              <Routes location={location}>
+                <Route path="/" element={<HomeStep />} />
+                <Route path="/agendar" element={<ScheduleStep />} />
+                <Route path="/pagamento" element={<PaymentStep />} />
+              </Routes>
+            </div>
+          </AnimatePresence>
+        </Suspense>
       </main>
 
       <Footer />

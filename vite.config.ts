@@ -24,10 +24,12 @@ export default defineConfig(() => {
       cssCodeSplit: true,
       sourcemap: false,
       emptyOutDir: true,
+      chunkSizeWarningLimit: 700,
       rollupOptions: {
         output: {
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom', 'motion', 'lucide-react'],
+            pdf: ['jspdf'],
           },
         },
       },
