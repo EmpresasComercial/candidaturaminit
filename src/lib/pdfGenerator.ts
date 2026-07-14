@@ -56,6 +56,8 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
 
   formatLabelValue('Nome:', agendamento.nomeCompleto, y);
   y += 7;
+  formatLabelValue('Telefone:', agendamento.telefone || '-', y);
+  y += 7;
   formatLabelValue('Naturalidade:', agendamento.provinciaNaturalidade, y);
   y += 7;
   formatLabelValue('Candidatura:', agendamento.provinciaCandidatura, y);

@@ -1,6 +1,7 @@
 export interface Agendamento {
   id: string;
   nomeCompleto: string;
+  telefone?: string;
   provinciaNaturalidade: string;
   provinciaCandidatura: string;
   orgao: string;

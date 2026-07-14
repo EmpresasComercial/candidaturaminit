@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { User, DollarSign, ArrowLeft, ArrowRight } from 'lucide-react';
+import { User, DollarSign, ArrowLeft, ArrowRight, Phone } from 'lucide-react';
 import { Agendamento, PROVINCIAS_ANGOLA } from '../types';
 import EmblemAngola from './EmblemAngola';
 
@@ -14,6 +14,7 @@ export default function ScheduleStep() {
   const [idade, setIdade] = useState('');
   const [genero, setGenero] = useState('');
   const [altura, setAltura] = useState('');
+  const [telefone, setTelefone] = useState('');
   const [modalidadePagamento, setModalidadePagamento] = useState<'multicaixa' | 'presencial' | ''>('');
   const [comentario, setComentario] = useState('');
   const [error, setError] = useState('');
@@ -96,6 +97,10 @@ export default function ScheduleStep() {
       setError('Por favor, selecione a modalidade de pagamento.');
       return;
     }
+    if (!telefone.trim()) {
+      setError('Por favor, introduza o seu contacto telefónico.');
+      return;
+    }
     if (!altura.trim()) {
       setError('Por favor, selecione a Altura.');
       return;
@@ -127,6 +132,7 @@ export default function ScheduleStep() {
     const novoAgendamento: Agendamento = {
       id: randomId,
       nomeCompleto: nome,
+      telefone: telefone.trim(),
       provinciaNaturalidade,
       provinciaCandidatura,
       orgao,
@@ -204,6 +210,26 @@ export default function ScheduleStep() {
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   placeholder="Insira o seu nome completo"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all text-sm text-slate-900"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-normal text-slate-600 block" htmlFor="input-telefone">
+                Contacto Telefónico
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                  <Phone className="w-4 h-4" />
+                </span>
+                <input
+                  id="input-telefone"
+                  type="tel"
+                  value={telefone}
+                  onChange={(e) => setTelefone(e.target.value)}
+                  placeholder="Insira o seu número de telefone"
                   className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all text-sm text-slate-900"
                   required
                 />
