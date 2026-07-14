@@ -65,6 +65,26 @@ export default function HomeStep() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
+            className="max-w-3xl text-left text-sm text-slate-500 space-y-4 mx-auto"
+          >
+            <div>
+              <p className="font-semibold text-slate-900">Objetivo do Portal:</p>
+              <p>
+                O portal oferece apoio presencial para o agendamento do serviço de assessoria à candidatura do concurso público do Ministério do Interior.
+              </p>
+            </div>
+            <div>
+              <p className="font-semibold text-slate-900">Informações do Serviço:</p>
+              <p>
+                O valor cobrado refere-se exclusivamente ao serviço de assistência na realização da inscrição. A candidatura será feita no portal oficial do Ministério do Interior, dentro das regras instituídas, e o pagamento não garante vaga, aprovação ou qualquer benefício no concurso.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
             className="flex items-center gap-2 text-xs text-slate-400 justify-center"
           >
             <CalendarRange className="w-4 h-4 text-[#FF6D00]" />

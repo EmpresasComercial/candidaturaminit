@@ -1,8 +1,14 @@
 export interface Agendamento {
   id: string;
   nomeCompleto: string;
-  cidade: string;
-  telefone: string;
+  provinciaNaturalidade: string;
+  provinciaCandidatura: string;
+  orgao: string;
+  idade: number;
+  genero: string;
+  altura: number;
+  modalidadePagamento: 'multicaixa' | 'presencial';
+  comentario?: string;
   valor: number;
   dataCriacao: string;
   referenciaMulticaixa: string;
@@ -15,21 +21,20 @@ export interface Agendamento {
 export const PROVINCIAS_ANGOLA = [
   'Bengo',
   'Benguela',
-  'Bie',
-  'Cabinda',
-  'Cuando Cubango',
+  'Bié',
+  'Cuando',
+  'Cubango',
   'Cuanza Norte',
   'Cuanza Sul',
   'Cunene',
   'Huambo',
-  'Huila',
-  'Luanda',
+  'Huíla',
   'Lunda Norte',
   'Lunda Sul',
   'Malanje',
   'Moxico',
   'Namibe',
-  'Uige',
+  'Uíge',
   'Zaire'
 ];
 

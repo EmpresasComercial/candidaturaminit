@@ -1,42 +1,115 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { User, MapPin, Phone, DollarSign, ArrowLeft, ArrowRight } from 'lucide-react';
+import { User, DollarSign, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Agendamento, PROVINCIAS_ANGOLA } from '../types';
 import EmblemAngola from './EmblemAngola';
 
 export default function ScheduleStep() {
   const navigate = useNavigate();
   const [nome, setNome] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [telefone, setTelefone] = useState('');
+  const [provinciaNaturalidade, setProvinciaNaturalidade] = useState('');
+  const [provinciaCandidatura, setProvinciaCandidatura] = useState('');
+  const [orgao, setOrgao] = useState('');
+  const [idade, setIdade] = useState('');
+  const [genero, setGenero] = useState('');
+  const [altura, setAltura] = useState('');
+  const [modalidadePagamento, setModalidadePagamento] = useState<'multicaixa' | 'presencial' | ''>('');
+  const [comentario, setComentario] = useState('');
   const [error, setError] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [alturaError, setAlturaError] = useState('');
+  const [showAlturaModal, setShowAlturaModal] = useState(false);
+
+  const ORGAO_OPTIONS = [
+    'Órgão Polícia Nacional',
+    'Órgão Investigação Criminal',
+    'Órgão Migração e Estrangeiros',
+    'Órgão Serviço Penitenciário',
+    'Órgão Proteção Civil e Bombeiros',
+  ];
+
+  const idadeOptions = Array.from({ length: 18 }, (_, index) => index + 18);
+  const alturaOptions = Array.from({ length: 101 }, (_, index) => (1 + index * 0.01).toFixed(2));
+
+  const getAlturaMin = (currentGenero: string, currentOrgao: string) => {
+    if (currentOrgao === 'Órgão Serviço Penitenciário') {
+      return currentGenero === 'Masculino' ? 1.7 : currentGenero === 'Feminino' ? 1.6 : 0;
+    }
+    return currentGenero === 'Masculino' ? 1.65 : currentGenero === 'Feminino' ? 1.6 : 0;
+  };
+
+  const alturaMin = getAlturaMin(genero, orgao);
+
+  const validateAltura = (value: string, currentGenero: string, currentOrgao: string) => {
+    if (!currentGenero || !currentOrgao) {
+      setAlturaError('Selecione o gênero e o órgão antes de escolher a altura.');
+      return;
+    }
+
+    const numeric = parseFloat(value);
+    if (!value || isNaN(numeric)) {
+      setAlturaError('Selecione uma altura válida em metros.');
+      return;
+    }
+
+    const min = getAlturaMin(currentGenero, currentOrgao);
+    if (numeric < min) {
+      setAlturaError(`Altura mínima para ${currentGenero} no ${currentOrgao} é ${min.toFixed(2)} m.`);
+      return;
+    }
+
+    setAlturaError('');
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
     if (!nome.trim()) {
-      setError('Por favor, introduza o seu Nome Completo.');
+      setError('Por favor, introduza o Nome completo.');
       return;
     }
-    if (!cidade.trim()) {
-      setError('Por favor, introduza a sua Cidade.');
+    if (!provinciaNaturalidade) {
+      setError('Por favor, selecione a Província de Naturalidade.');
       return;
     }
-    if (!telefone.trim()) {
-      setError('Por favor, introduza o seu Número de Telefone.');
+    if (!provinciaCandidatura) {
+      setError('Por favor, selecione a Província de Candidatura.');
       return;
     }
-    
-    const cleanPhone = telefone.replace(/\s+/g, '');
-    if (cleanPhone.length < 9) {
-      setError('O número de telefone deve conter no mínimo 9 dígitos.');
+    if (!orgao) {
+      setError('Por favor, selecione o Órgão de Candidatura.');
+      return;
+    }
+    if (!idade) {
+      setError('Por favor, selecione a Idade.');
+      return;
+    }
+    if (Number(idade) < 18) {
+      setError('A idade mínima para se candidatar é 18 anos.');
+      return;
+    }
+    if (!genero) {
+      setError('Por favor, selecione o Gênero.');
+      return;
+    }
+    if (!modalidadePagamento) {
+      setError('Por favor, selecione a modalidade de pagamento.');
+      return;
+    }
+    if (!altura.trim()) {
+      setError('Por favor, selecione a Altura.');
+      return;
+    }
+
+    const alturaNum = parseFloat(altura);
+    if (isNaN(alturaNum) || alturaNum < alturaMin) {
+      setError(`Altura mínima para ${genero} no ${orgao} é ${alturaMin.toFixed(2)} m.`);
       return;
     }
 
     setError('');
 
-    const formattedRef = "928 809 034";
+    const formattedRef = '928 809 034';
     const randomId = `AG-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const savedBookingsJSON = localStorage.getItem('concurso_agendamentos');
@@ -54,14 +127,20 @@ export default function ScheduleStep() {
     const novoAgendamento: Agendamento = {
       id: randomId,
       nomeCompleto: nome,
-      cidade,
-      telefone,
+      provinciaNaturalidade,
+      provinciaCandidatura,
+      orgao,
+      idade: Number(idade),
+      genero,
+      altura: alturaNum,
+      modalidadePagamento,
+      comentario: comentario.trim(),
       valor: 1250,
       dataCriacao: new Date().toISOString(),
-      referenciaMulticaixa: formattedRef,
-      entidadeMulticaixa: '21012',
+      referenciaMulticaixa: modalidadePagamento === 'multicaixa' ? formattedRef : '',
+      entidadeMulticaixa: modalidadePagamento === 'multicaixa' ? '21012' : '',
       pago: false,
-      numeroOrdem: nextOrderNumber
+      numeroOrdem: nextOrderNumber,
     };
 
     existingBookings.push(novoAgendamento);
@@ -69,12 +148,6 @@ export default function ScheduleStep() {
 
     navigate('/pagamento', { state: { agendamento: novoAgendamento } });
   };
-
-  const suggestions = PROVINCIAS_ANGOLA.filter(prov => 
-    prov.toLowerCase().includes(cidade.toLowerCase()) && 
-    cidade.trim() !== '' && 
-    prov.toLowerCase() !== cidade.toLowerCase()
-  );
 
   return (
     <motion.div
@@ -137,72 +210,207 @@ export default function ScheduleStep() {
               </div>
             </div>
 
-            <div className="space-y-1.5 relative">
-              <label className="text-xs font-normal text-slate-600 block" htmlFor="input-cidade">
-                Cidade / Província
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                  <MapPin className="w-4 h-4" />
-                </span>
-                <input
-                  id="input-cidade"
-                  type="text"
-                  value={cidade}
-                  onChange={(e) => {
-                    setCidade(e.target.value);
-                    setShowSuggestions(true);
-                  }}
-                  onFocus={() => setShowSuggestions(true)}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  placeholder="Ex: Luanda, Benguela, Lubango..."
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all text-sm text-slate-900"
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="select-provincia-naturalidade">
+                  Província de Naturalidade
+                </label>
+                <select
+                  id="select-provincia-naturalidade"
+                  value={provinciaNaturalidade}
+                  onChange={(e) => setProvinciaNaturalidade(e.target.value)}
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
                   required
-                />
+                >
+                  <option value="" disabled>Selecione a província de naturalidade</option>
+                  {PROVINCIAS_ANGOLA.map((prov) => (
+                    <option key={prov} value={prov}>{prov}</option>
+                  ))}
+                </select>
               </div>
 
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute z-10 w-full bg-white border border-slate-100 rounded-xl shadow-lg mt-1 max-h-48 overflow-y-auto divide-y divide-slate-50">
-                  {suggestions.map((prov) => (
-                    <button
-                      key={prov}
-                      type="button"
-                      onClick={() => {
-                        setCidade(prov);
-                        setShowSuggestions(false);
-                      }}
-                      className="w-full text-left px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
-                    >
-                      {prov}
-                    </button>
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="select-provincia-candidatura">
+                  Província de Candidatura
+                </label>
+                <select
+                  id="select-provincia-candidatura"
+                  value={provinciaCandidatura}
+                  onChange={(e) => setProvinciaCandidatura(e.target.value)}
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
+                  required
+                >
+                  <option value="" disabled>Selecione a província de candidatura</option>
+                  {PROVINCIAS_ANGOLA.map((prov) => (
+                    <option key={prov} value={prov}>{prov}</option>
                   ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="select-idade">
+                  Idade
+                </label>
+                <select
+                  id="select-idade"
+                  value={idade}
+                  onChange={(e) => setIdade(e.target.value)}
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
+                  required
+                >
+                  <option value="" disabled>Selecione a idade</option>
+                  {idadeOptions.map((option) => (
+                    <option key={option} value={option}>{option} anos</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="select-orgao">
+                  Órgão
+                </label>
+                <select
+                  id="select-orgao"
+                  value={orgao}
+                  onChange={(e) => {
+                    setOrgao(e.target.value);
+                    if (altura) {
+                      validateAltura(altura, genero, e.target.value);
+                    }
+                  }}
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
+                  required
+                >
+                  <option value="" disabled>Selecione o órgão de candidatura</option>
+                  {ORGAO_OPTIONS.map((option) => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block">
+                  Gênero
+                </label>
+                <div className="flex items-center gap-4">
+                  {['Masculino', 'Feminino'].map((option) => (
+                    <label key={option} className="inline-flex items-center gap-2 text-sm text-slate-900">
+                      <input
+                        type="radio"
+                        name="genero"
+                        value={option}
+                        checked={genero === option}
+                        onChange={(e) => {
+                          setGenero(e.target.value);
+                          if (altura) {
+                            validateAltura(altura, e.target.value, orgao);
+                          }
+                        }}
+                        className="h-4 w-4 text-[#FF6D00] accent-[#FF6D00]"
+                        required
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-1.5 relative">
+              <label className="text-xs font-normal text-slate-600 block" htmlFor="input-altura">
+                Altura (metros)
+              </label>
+              <button
+                type="button"
+                id="input-altura"
+                onClick={() => {
+                  setShowAlturaModal(true);
+                  setError('');
+                }}
+                className="w-full text-left rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
+              >
+                {altura ? `${parseFloat(altura).toFixed(2)} m` : 'Clique para selecionar a altura'}
+              </button>
+              {alturaError && (
+                <p className="text-xs text-rose-600">{alturaError}</p>
+              )}
+
+              {showAlturaModal && (
+                <div className="absolute z-20 left-0 right-0 mt-2 max-h-64 overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-xl p-3">
+                  {!genero || !orgao ? (
+                    <div className="text-sm text-slate-500">
+                      Selecione primeiro o gênero e o órgão para ver as alturas disponíveis.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-2">
+                      {alturaOptions
+                        .filter((value) => parseFloat(value) >= alturaMin)
+                        .map((value) => (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() => {
+                              setAltura(value);
+                              validateAltura(value, genero, orgao);
+                              setShowAlturaModal(false);
+                            }}
+                            className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-xs text-slate-700 hover:bg-[#FF6D00] hover:text-white transition"
+                          >
+                            {value} m
+                          </button>
+                        ))}
+                    </div>
+                  )}
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setShowAlturaModal(false)}
+                      className="text-xs text-slate-500 hover:text-slate-900"
+                    >
+                      Fechar
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-normal text-slate-600 block" htmlFor="input-telefone">
-                Número de Telefone
+              <label className="text-xs font-normal text-slate-600 block">
+                Modalidade de Pagamento
               </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                  <Phone className="w-4 h-4" />
-                </span>
-                <input
-                  id="input-telefone"
-                  type="tel"
-                  value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
-                  placeholder="Coloque o seu contacto telefónico"
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all text-sm font-mono text-slate-900"
-                  required
-                />
+              <div className="flex flex-col gap-3">
+                <label className="inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="modalidadePagamento"
+                    value="multicaixa"
+                    checked={modalidadePagamento === 'multicaixa'}
+                    onChange={(e) => setModalidadePagamento(e.target.value as 'multicaixa' | 'presencial')}
+                    className="h-4 w-4 text-[#FF6D00] accent-[#FF6D00]"
+                    required
+                  />
+                  Pagamento Multicaixa Express (online)
+                </label>
+                <label className="inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="modalidadePagamento"
+                    value="presencial"
+                    checked={modalidadePagamento === 'presencial'}
+                    onChange={(e) => setModalidadePagamento(e.target.value as 'multicaixa' | 'presencial')}
+                    className="h-4 w-4 text-[#FF6D00] accent-[#FF6D00]"
+                    required
+                  />
+                  Pagamento Presencial (no local)
+                </label>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-normal text-slate-500 block">
-                Valor do Serviço de Apoio (Somente Leitura)
+              <label className="text-xs font-normal text-slate-600 block" htmlFor="textarea-comentario">
+                Comentário (opcional)
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
@@ -221,10 +429,10 @@ export default function ScheduleStep() {
             <div className="pt-4">
               <button
                 type="submit"
-                id="btn-gerar-talao"
+                id="btn-agendar"
                 className="w-full flex items-center justify-center gap-2 bg-[#FF6D00] hover:bg-[#E06000] text-white font-semibold font-display h-[54px] rounded-full shadow-md shadow-orange-500/10 transition-all duration-300 active:scale-95 cursor-pointer text-sm"
               >
-                <span>Gerar Talão de Agendamento</span>
+                <span>Agendar</span>
                 <ArrowRight className="w-4 h-4 shrink-0" />
               </button>
             </div>
