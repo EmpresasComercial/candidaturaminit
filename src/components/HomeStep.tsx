@@ -70,13 +70,13 @@ export default function HomeStep() {
             <div>
               <p className="font-semibold text-slate-900">Objetivo do Portal:</p>
               <p>
-                O portal oferece apoio presencial para o agendamento do serviço de assessoria à candidatura do concurso público do Ministério do Interior.
+                O portal oferece ajuda as pessoas a lhe fazer as sua inscrição, se tu não sabe ou nao consegue fazer inscrição online, nós fazemos para si, apenas paga 1250kz, e tu pode ja agendamento a sua inscrição online para a candidatura do concurso público do Ministério do Interior.
               </p>
             </div>
             <div>
               <p className="font-semibold text-slate-900">Informações do Serviço:</p>
               <p>
-                O valor cobrado refere-se exclusivamente ao serviço de assistência na realização da inscrição. A candidatura será feita no portal oficial do Ministério do Interior, dentro das regras instituídas, e o pagamento não garante vaga, aprovação ou qualquer benefício no concurso.
+                O valor cobrado é de 1250kz refere-se exclusivamente ao serviço de fazer a sua inscrição inscrição. A candidatura será feita no portal oficial do Ministério do Interior, dentro das regras instituídas.
               </p>
             </div>
           </motion.div>

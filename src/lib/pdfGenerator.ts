@@ -121,14 +121,45 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
   doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
 
-  const lines = doc.splitTextToSize(
-    'Guarde este comprovativo e envie o comprovativo de pagamento pelo WhatsApp para confirmação. O serviço pago refere-se apenas ao apoio na inscrição, e não garante vaga ou aprovação no concurso.',
-    contentWidth
-  );
+  const instructionLines = agendamento.modalidadePagamento === 'multicaixa'
+    ? [
+        'Pagamento Multicaixa Express.',
+        'O comprovativo de Talão de Agendamento da inscrição online ao concurso do Ministério do Interior foi gerado com sucesso.',
+        '',
+        'Procedimento:',
+        '1. Acesse o seu Multicaixa Express',
+        '2. Insira a referência ou número de entidade gerado pela plataforma',
+        '3. Efetue o pagamento no valor de 1.250,00 KZ',
+        '4. Faça a captura do talão de pagamento emitido pelo Multicaixa Express',
+        '5. Envie o comprovativo de pagamento para este WhatsApp: 928 80 90 34',
+        '',
+        'Após a confirmação do pagamento, deverá nos fornecer: Bilhete de Identidade em PDF e Certificado em PDF.',
+        'No dia 16 faremos a sua inscrição.',
+        '',
+        'Obrigado por ter concluído o agendamento.'
+      ]
+    : [
+        'Pagamento Presencial.',
+        'O pagamento refere-se ao serviço de inscrição online para a candidatura do Ministério do Interior.',
+        'Instruções: Guarde este comprovativo e traga-o no dia 16 em que ocorrerá a candidatura, para confirmar o seu agendamento e efetuar o pagamento.',
+        '',
+        'Muito obrigado por confiar em nós. Desejamos boa sorte!'
+      ];
 
-  lines.forEach((line) => {
-    doc.text(line, margin, y);
-    y += 5.5;
+  instructionLines.forEach((line) => {
+    const isBoldLine = line === 'Procedimento:' || /^\d+\./.test(line);
+    doc.setFont('Helvetica', isBoldLine ? 'bold' : 'normal');
+
+    if (!line) {
+      y += 2;
+      return;
+    }
+
+    const wrappedLines = doc.splitTextToSize(line, contentWidth);
+    wrappedLines.forEach((wrappedLine) => {
+      doc.text(wrappedLine, margin, y);
+      y += 5.5;
+    });
   });
 
   y = pageHeight - margin - 22;

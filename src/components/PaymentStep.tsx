@@ -40,6 +40,31 @@ export default function PaymentStep() {
   const isPresencial = agendamento.modalidadePagamento === 'presencial';
   const isMulticaixa = agendamento.modalidadePagamento === 'multicaixa';
 
+  const instructionsContent = isMulticaixa ? (
+    <div className="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+      <p className="font-bold text-slate-800">INSTRUÇÕES:</p>
+      <p>Pagamento Multicaixa Express.</p>
+      <p>O comprovativo de Talão de Agendamento da inscrição online ao concurso do Ministério do Interior foi gerado com sucesso.</p>
+      <p className="font-semibold text-slate-800">Procedimento:</p>
+      <p className="font-semibold">1. Acesse o seu Multicaixa Express</p>
+      <p className="font-semibold">2. Insira a referência ou número de entidade gerado pela plataforma</p>
+      <p className="font-semibold">3. Efetue o pagamento no valor de 1.250,00 KZ</p>
+      <p className="font-semibold">4. Faça a captura do talão de pagamento emitido pelo Multicaixa Express</p>
+      <p className="font-semibold">5. Envie o comprovativo de pagamento para este WhatsApp: 928 80 90 34</p>
+      <p>Após a confirmação do pagamento, deverá nos fornecer: Bilhete de Identidade em PDF e Certificado em PDF.</p>
+      <p>No dia 16 faremos a sua inscrição.</p>
+      <p>Obrigado por ter concluído o agendamento.</p>
+    </div>
+  ) : (
+    <div className="space-y-1.5 text-xs text-slate-600 leading-relaxed">
+      <p className="font-bold text-slate-800">INSTRUÇÕES:</p>
+      <p>Pagamento Presencial.</p>
+      <p>O pagamento refere-se ao serviço de inscrição online para a candidatura do Ministério do Interior.</p>
+      <p>Instruções: Guarde este comprovativo e traga-o no dia 16 em que ocorrerá a candidatura, para confirmar o seu agendamento e efetuar o pagamento.</p>
+      <p>Muito obrigado por confiar em nós. Desejamos boa sorte!</p>
+    </div>
+  );
+
   const getWhatsAppLink = () => {
     const pagamentoTexto = isMulticaixa
       ? `🎫 *Referência:* ${agendamento.referenciaMulticaixa}`
@@ -90,6 +115,9 @@ export default function PaymentStep() {
             </div>
 
             <div className="text-center text-[9px] border-t-2 border-dashed border-slate-300 pt-4 mt-6">
+              <div className="text-left text-[10px] mb-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                {instructionsContent}
+              </div>
               <p className="font-normal text-slate-700">Este comprovativo certifica o pedido de agendamento de suporte técnico.</p>
               <p>Após pagar, envie este talão e o comprovativo bancário para o WhatsApp +244 928809034.</p>
             </div>
@@ -245,15 +273,15 @@ export default function PaymentStep() {
               </div>
             )}
 
-            {!isPresencial && (
+            {!isPresencial ? (
               <div className="flex gap-3 bg-white border border-orange-200 rounded-xl p-4 text-xs text-slate-600 leading-relaxed">
                 <AlertCircle className="w-5 h-5 text-[#FF6D00] shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <p className="font-bold text-slate-800">Instrução importante:</p>
-                  <p className="italic">
-                    «Após efetuar o pagamento, envie o comprovativo através do WhatsApp para que possamos validar o pagamento e iniciar o processo da sua candidatura.»
-                  </p>
-                </div>
+                <div>{instructionsContent}</div>
+              </div>
+            ) : (
+              <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow-md border border-slate-200">
+                <h3 className="text-sm font-bold text-slate-900 mb-2">Pagamento Presencial</h3>
+                {instructionsContent}
               </div>
             )}
 
