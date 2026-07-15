@@ -1,9 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { User, DollarSign, ArrowLeft, ArrowRight, Phone } from 'lucide-react';
+import { User, DollarSign, ArrowRight, Phone } from 'lucide-react';
 import { Agendamento, PROVINCIAS_ANGOLA } from '../types';
-import EmblemAngola from './EmblemAngola';
 
 export default function ScheduleStep() {
   const navigate = useNavigate();
@@ -15,6 +13,7 @@ export default function ScheduleStep() {
   const [genero, setGenero] = useState('');
   const [altura, setAltura] = useState('');
   const [telefone, setTelefone] = useState('');
+  const [email, setEmail] = useState('');
   const [modalidadePagamento, setModalidadePagamento] = useState<'multicaixa' | 'presencial' | ''>('');
   const [comentario, setComentario] = useState('');
   const [error, setError] = useState('');
@@ -69,12 +68,12 @@ export default function ScheduleStep() {
       setError('Por favor, introduza o Nome completo.');
       return;
     }
-    if (!provinciaNaturalidade) {
-      setError('Por favor, selecione a Província de Naturalidade.');
+    if (!provinciaNaturalidade.trim()) {
+      setError('Por favor, introduza a Província de Naturalidade.');
       return;
     }
-    if (!provinciaCandidatura) {
-      setError('Por favor, selecione a Província de Candidatura.');
+    if (!provinciaCandidatura.trim()) {
+      setError('Por favor, introduza a Província de Candidatura.');
       return;
     }
     if (!orgao) {
@@ -99,6 +98,14 @@ export default function ScheduleStep() {
     }
     if (!telefone.trim()) {
       setError('Por favor, introduza o seu contacto telefónico.');
+      return;
+    }
+    if (!email.trim()) {
+      setError('Por favor, introduza o seu endereço de e-mail.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError('Por favor, introduza um endereço de e-mail válido.');
       return;
     }
     if (!altura.trim()) {
@@ -128,25 +135,28 @@ export default function ScheduleStep() {
     }
 
     const nextOrderNumber = existingBookings.length + 1;
+    const numeroFatura = `FT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(nextOrderNumber).padStart(4, '0')}`;
 
     const novoAgendamento: Agendamento = {
       id: randomId,
       nomeCompleto: nome,
       telefone: telefone.trim(),
-      provinciaNaturalidade,
-      provinciaCandidatura,
+      email: email.trim(),
+      provinciaNaturalidade: provinciaNaturalidade.trim(),
+      provinciaCandidatura: provinciaCandidatura.trim(),
       orgao,
       idade: Number(idade),
       genero,
       altura: alturaNum,
       modalidadePagamento,
       comentario: comentario.trim(),
-      valor: 1250,
+      valor: 1000,
       dataCriacao: new Date().toISOString(),
       referenciaMulticaixa: modalidadePagamento === 'multicaixa' ? formattedRef : '',
       entidadeMulticaixa: modalidadePagamento === 'multicaixa' ? '21012' : '',
       pago: false,
       numeroOrdem: nextOrderNumber,
+      numeroFatura,
     };
 
     existingBookings.push(novoAgendamento);
@@ -156,41 +166,11 @@ export default function ScheduleStep() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
-    >
+    <div>
       <div className="max-w-xl mx-auto px-4 py-8">
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-[#FF6D00] transition-colors mb-6 font-normal group cursor-pointer"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" />
-          <span>Voltar para a página inicial</span>
-        </button>
-
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white border border-slate-100 rounded-2xl shadow-xl shadow-slate-100/40 p-6 md:p-8 space-y-6"
-        >
-          <div className="flex flex-col items-center text-center space-y-3 pb-2 border-b border-slate-100">
-            <EmblemAngola className="w-16 h-16" />
-            <div className="space-y-1">
-              <h2 className="text-xl font-bold text-slate-900 font-display">
-                Formulário de Agendamento
-              </h2>
-              <p className="text-xs text-slate-400">
-                Preencha os seus dados para gerar o seu talão de agendamento de suporte técnico.
-              </p>
-            </div>
-          </div>
-
+        <div className="bg-white border border-slate-100 rounded-2xl shadow-xl shadow-slate-100/40 p-6 md:p-8">
           {error && (
-            <div className="bg-rose-50 border-l-4 border-rose-500 text-rose-800 p-3.5 rounded-xl text-xs font-normal">
+            <div className="bg-rose-50 border-l-4 border-rose-500 text-rose-800 p-3.5 rounded-xl text-xs font-normal mb-5">
               {error}
             </div>
           )}
@@ -236,41 +216,55 @@ export default function ScheduleStep() {
               </div>
             </div>
 
+            <div className="space-y-1.5">
+              <label className="text-xs font-normal text-slate-600 block" htmlFor="input-email">
+                E-mail
+              </label>
+              <input
+                id="input-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Insira o seu endereço de e-mail"
+                className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all"
+                required
+              />
+            </div>
+
             <div className="grid gap-5 md:grid-cols-2">
               <div className="space-y-1.5">
-                <label className="text-xs font-normal text-slate-600 block" htmlFor="select-provincia-naturalidade">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="input-provincia-naturalidade">
                   Província de Naturalidade
                 </label>
-                <select
-                  id="select-provincia-naturalidade"
+                <input
+                  id="input-provincia-naturalidade"
+                  list="provincias-options"
                   value={provinciaNaturalidade}
                   onChange={(e) => setProvinciaNaturalidade(e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
+                  placeholder="Digite ou selecione a província"
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
                   required
-                >
-                  <option value="" disabled>Selecione a província de naturalidade</option>
+                />
+                <datalist id="provincias-options">
                   {PROVINCIAS_ANGOLA.map((prov) => (
-                    <option key={prov} value={prov}>{prov}</option>
+                    <option key={prov} value={prov} />
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-normal text-slate-600 block" htmlFor="select-provincia-candidatura">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="input-provincia-candidatura">
                   Província de Candidatura
                 </label>
-                <select
-                  id="select-provincia-candidatura"
+                <input
+                  id="input-provincia-candidatura"
+                  list="provincias-options"
                   value={provinciaCandidatura}
                   onChange={(e) => setProvinciaCandidatura(e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
+                  placeholder="Digite ou selecione a província"
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
                   required
-                >
-                  <option value="" disabled>Selecione a província de candidatura</option>
-                  {PROVINCIAS_ANGOLA.map((prov) => (
-                    <option key={prov} value={prov}>{prov}</option>
-                  ))}
-                </select>
+                />
               </div>
             </div>
 
@@ -444,27 +438,34 @@ export default function ScheduleStep() {
                 </span>
                 <input
                   type="text"
-                  value="1.250 Kz"
+                  value="1.000,00 Kz (MIL KWANZAS)"
                   readOnly
                   id="input-valor"
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 font-normal text-sm cursor-not-allowed outline-hidden"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white text-[#FF6D00] font-bold text-base md:text-lg cursor-not-allowed outline-hidden"
                 />
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 space-y-3">
               <button
                 type="submit"
                 id="btn-agendar"
                 className="w-full flex items-center justify-center gap-2 bg-[#FF6D00] hover:bg-[#E06000] text-white font-semibold font-display h-[54px] rounded-full shadow-md shadow-orange-500/10 transition-all duration-300 active:scale-95 cursor-pointer text-sm"
               >
-                <span>Agendar</span>
+                <span>Continuar</span>
                 <ArrowRight className="w-4 h-4 shrink-0" />
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="w-full flex items-center justify-center gap-2 border border-slate-200 bg-white text-slate-700 font-semibold font-display h-[54px] rounded-full shadow-sm shadow-slate-200 transition-all duration-300 hover:bg-slate-50"
+              >
+                Cancelar
               </button>
             </div>
           </form>
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -2,6 +2,7 @@ export interface Agendamento {
   id: string;
   nomeCompleto: string;
   telefone?: string;
+  email?: string;
   provinciaNaturalidade: string;
   provinciaCandidatura: string;
   orgao: string;
@@ -16,6 +17,7 @@ export interface Agendamento {
   entidadeMulticaixa: string;
   pago: boolean;
   numeroOrdem: number;
+  numeroFatura?: string;
 }
 
 

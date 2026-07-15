@@ -58,6 +58,10 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
   y += 7;
   formatLabelValue('Telefone:', agendamento.telefone || '-', y);
   y += 7;
+  formatLabelValue('Fatura:', agendamento.numeroFatura || '-', y);
+  y += 7;
+  formatLabelValue('Email:', agendamento.email || '-', y);
+  y += 7;
   formatLabelValue('Naturalidade:', agendamento.provinciaNaturalidade, y);
   y += 7;
   formatLabelValue('Candidatura:', agendamento.provinciaCandidatura, y);
@@ -74,7 +78,7 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
     formatLabelValue('Comentário:', agendamento.comentario, y);
     y += 7;
   }
-  formatLabelValue('Valor:', '1.250 Kz', y);
+  formatLabelValue('Valor:', '1.000 Kz', y);
   y += 7;
   formatLabelValue('Emitido em:', formattedDate, y);
 
@@ -97,7 +101,7 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
     const cleanRef = agendamento.referenciaMulticaixa.replace(/\s/g, '');
     const maskedRef = cleanRef.length >= 9 ? `${cleanRef.slice(0, 3)}*****${cleanRef.slice(-1)}` : '928*****4';
     doc.text(`Referência: ${maskedRef}`, margin + 5, y + 14);
-    doc.text('Valor total: 1.250,00 Kz', margin + 5, y + 20);
+    doc.text('Valor total: 1.000,00 Kz', margin + 5, y + 20);
 
     y += 38;
   } else {
@@ -131,7 +135,7 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
         'Procedimento:',
         '1. Acesse o seu Multicaixa Express',
         '2. Insira a referência ou número de entidade gerado pela plataforma',
-        '3. Efetue o pagamento no valor de 1.250,00 KZ',
+        '3. Efetue o pagamento no valor de 1.000,00 KZ',
         '4. Faça a captura do talão de pagamento emitido pelo Multicaixa Express',
         '5. Envie o comprovativo de pagamento para este WhatsApp: 928 80 90 34',
         '',

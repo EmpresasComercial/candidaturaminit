@@ -1,13 +1,12 @@
 import React from 'react';
-import logoReal from '../assets/logo.jpg';
 
 export default function EmblemAngola({ className = 'w-24 h-24' }: { className?: string }) {
   return (
-    <div className={`relative flex items-center justify-center ${className}`} id="emblem-container">
+    <div className={`relative flex items-center justify-center ${className} rounded-none bg-transparent`} id="emblem-container">
       <img
-        src={logoReal}
+        src="/LOGO.MININT.jpeg"
         alt="Logótipo do Ministério do Interior"
-        className="w-full h-full object-contain"
+        className="w-full h-full object-contain rounded-none bg-transparent"
       />
     </div>
   );

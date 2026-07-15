@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Clock } from 'lucide-react';
-import EmblemAngola from './EmblemAngola';
 
 export default function Header() {
   const location = useLocation();
@@ -14,9 +13,6 @@ export default function Header() {
         className={`flex items-center gap-3 ${isPaymentPage ? 'cursor-default' : 'cursor-pointer group'}`}
         id="header-brand-logo"
       >
-        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-slate-100 group-hover:bg-slate-55 transition-all shrink-0">
-          <EmblemAngola className="w-8 h-8" />
-        </div>
         <div>
           <h1 className="text-xs font-black text-slate-900 font-display leading-tight uppercase tracking-widest">
             Portal de Agendamento
