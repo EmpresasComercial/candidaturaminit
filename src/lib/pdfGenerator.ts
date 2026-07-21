@@ -56,7 +56,15 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
 
   formatLabelValue('Nome:', agendamento.nomeCompleto, y);
   y += 7;
-  formatLabelValue('Telefone:', agendamento.telefone || '-', y);
+  formatLabelValue('Nome do Pai:', agendamento.nomeCompletoPai, y);
+  y += 7;
+  formatLabelValue('Nome da Mãe:', agendamento.nomeCompletoMae, y);
+  y += 7;
+  formatLabelValue('Data de Nascimento:', agendamento.dataNascimento, y);
+  y += 7;
+  formatLabelValue('Emissão do Bilhete:', agendamento.dataEmissaoBilhete, y);
+  y += 7;
+  formatLabelValue('Expiração do Bilhete:', agendamento.dataExpiracaoBilhete, y);
   y += 7;
   formatLabelValue('Fatura:', agendamento.numeroFatura || '-', y);
   y += 7;
@@ -64,15 +72,7 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
   y += 7;
   formatLabelValue('Naturalidade:', agendamento.provinciaNaturalidade, y);
   y += 7;
-  formatLabelValue('Candidatura:', agendamento.provinciaCandidatura, y);
-  y += 7;
   formatLabelValue('Órgão:', agendamento.orgao, y);
-  y += 7;
-  formatLabelValue('Idade:', `${agendamento.idade} anos`, y);
-  y += 7;
-  formatLabelValue('Gênero:', agendamento.genero, y);
-  y += 7;
-  formatLabelValue('Altura:', `${agendamento.altura.toFixed(2)} m`, y);
   y += 7;
   if (agendamento.comentario) {
     formatLabelValue('Comentário:', agendamento.comentario, y);
@@ -84,38 +84,25 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
 
   y += 12;
 
-  if (agendamento.modalidadePagamento === 'multicaixa') {
-    doc.setDrawColor(254, 215, 170);
-    doc.setFillColor(255, 251, 240);
-    doc.rect(margin, y, contentWidth, 28, 'FD');
+  doc.setDrawColor(254, 215, 170);
+  doc.setFillColor(255, 251, 240);
+  doc.rect(margin, y, contentWidth, 28, 'FD');
 
-    doc.setFont('Helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.setTextColor(234, 88, 12);
-    doc.text('PAGAMENTO MULTICAIXA', margin + 5, y + 6);
+  doc.setFont('Helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(234, 88, 12);
+  doc.text('PAGAMENTO MULTICAIXA', margin + 5, y + 6);
 
-    doc.setFont('Helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(0, 0, 0);
+  doc.setFont('Helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(0, 0, 0);
 
-    const cleanRef = agendamento.referenciaMulticaixa.replace(/\s/g, '');
-    const maskedRef = cleanRef.length >= 9 ? `${cleanRef.slice(0, 3)}*****${cleanRef.slice(-1)}` : '928*****4';
-    doc.text(`Referência: ${maskedRef}`, margin + 5, y + 14);
-    doc.text('Valor total: 1.000,00 Kz', margin + 5, y + 20);
+  const cleanRef = agendamento.referenciaMulticaixa.replace(/\s/g, '');
+  const maskedRef = cleanRef.length >= 9 ? `${cleanRef.slice(0, 3)}*****${cleanRef.slice(-1)}` : '928*****4';
+  doc.text(`Referência: ${maskedRef}`, margin + 5, y + 14);
+  doc.text('Valor total: 1.000,00 Kz', margin + 5, y + 20);
 
-    y += 38;
-  } else {
-    doc.setFont('Helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.setTextColor(255, 109, 0);
-    doc.text('PAGAMENTO PRESENCIAL', margin, y);
-    y += 8;
-    doc.setFont('Helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(0, 0, 0);
-    doc.text('O pagamento presencial refere-se ao serviço de apoio na realização da inscrição da candidatura.', margin, y);
-    y += 18;
-  }
+  y += 38;
 
   doc.setFont('Helvetica', 'bold');
   doc.setFontSize(12);
@@ -127,8 +114,7 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
   doc.setFontSize(9);
   doc.setTextColor(0, 0, 0);
 
-  const instructionLines = agendamento.modalidadePagamento === 'multicaixa'
-    ? [
+  const instructionLines = [
         'Pagamento Multicaixa Express.',
         'O comprovativo de Talão de Agendamento da inscrição online ao concurso do Ministério do Interior foi gerado com sucesso.',
         '',
@@ -143,13 +129,6 @@ export function generateAppointmentPDF(agendamento: Agendamento): void {
         'No dia 16 faremos a sua inscrição.',
         '',
         'Obrigado por ter concluído o agendamento.'
-      ]
-    : [
-        'Pagamento Presencial.',
-        'O pagamento refere-se ao serviço de inscrição online para a candidatura do Ministério do Interior.',
-        'Instruções: Guarde este comprovativo e traga-o no dia 16 em que ocorrerá a candidatura, para confirmar o seu agendamento e efetuar o pagamento.',
-        '',
-        'Muito obrigado por confiar em nós. Desejamos boa sorte!'
       ];
 
   instructionLines.forEach((line) => {

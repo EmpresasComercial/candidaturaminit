@@ -30,10 +30,7 @@ export default function PaymentStep() {
     module.generateAppointmentPDF(agendamento);
   };
 
-  const isPresencial = agendamento.modalidadePagamento === 'presencial';
-  const isMulticaixa = agendamento.modalidadePagamento === 'multicaixa';
-
-  const instructionsContent = isMulticaixa ? (
+  const instructionsContent = (
     <div className="space-y-1.5 text-xs text-slate-600 leading-relaxed">
       <p className="font-bold text-slate-800">INSTRUÇÕES:</p>
       <p>Pagamento Multicaixa Express gerado com sucesso.</p>
@@ -49,22 +46,12 @@ export default function PaymentStep() {
       <p className="font-semibold text-red-600">Inscrição no dia 16</p>
       <p>Obrigado por ter concluído o agendamento.</p>
     </div>
-  ) : (
-    <div className="space-y-1.5 text-xs text-slate-600 leading-relaxed">
-      <p className="font-bold text-slate-800">INSTRUÇÕES:</p>
-      <p>Pagamento Presencial.</p>
-      <p>O pagamento refere-se ao serviço de inscrição online para a candidatura do Ministério do Interior.</p>
-      <p>Instruções: Guarde este comprovativo e traga-o no dia 16 em que ocorrerá a candidatura, para confirmar o seu agendamento e efetuar o pagamento.</p>
-      <p>Muito obrigado por confiar em nós. Desejamos boa sorte!</p>
-    </div>
   );
 
   const getWhatsAppLink = () => {
-    const pagamentoTexto = isMulticaixa
-      ? `🎫 *Referência:* ${agendamento.referenciaMulticaixa}`
-      : '📍 *Modalidade:* Pagamento presencial no local';
+    const pagamentoTexto = `🎫 *Referência:* ${agendamento.referenciaMulticaixa}`;
 
-    const text = `Olá! Acabei de efetuar o agendamento da candidatura para o concurso público do Ministério do Interior no portal.%0A%0A*DADOS DE AGENDAMENTO:*%0A👤 *Nome:* ${encodeURIComponent(agendamento.nomeCompleto)}%0A� *E-mail:* ${encodeURIComponent(agendamento.email || '-') }%0A�📍 *Província de Naturalidade:* ${encodeURIComponent(agendamento.provinciaNaturalidade)}%0A📍 *Província de Candidatura:* ${encodeURIComponent(agendamento.provinciaCandidatura)}%0A🏢 *Órgão:* ${encodeURIComponent(agendamento.orgao)}%0A🧑 *Idade:* ${encodeURIComponent(String(agendamento.idade))}%0A⚧ *Gênero:* ${encodeURIComponent(agendamento.genero)}%0A📏 *Altura:* ${encodeURIComponent(`${agendamento.altura.toFixed(2)} m`)}%0A💵 *Valor:* 1.000 Kz%0A%0A*DADOS DE PAGAMENTO:*%0A${encodeURIComponent(pagamentoTexto)}%0A%0AEnvio em anexo o comprovativo de pagamento para validação do agendamento e início da minha candidatura.`;
+    const text = `Olá! Acabei de efetuar o agendamento da candidatura para o concurso público do Ministério do Interior no portal.%0A%0A*DADOS DE AGENDAMENTO:*%0A👤 *Nome:* ${encodeURIComponent(agendamento.nomeCompleto)}%0A👨‍👩‍👧 *Pai:* ${encodeURIComponent(agendamento.nomeCompletoPai)}%0A👩 *Mãe:* ${encodeURIComponent(agendamento.nomeCompletoMae)}%0A🎂 *Data de Nascimento:* ${encodeURIComponent(agendamento.dataNascimento)}%0A🪪 *Emissão do Bilhete:* ${encodeURIComponent(agendamento.dataEmissaoBilhete)}%0A📅 *Expiração do Bilhete:* ${encodeURIComponent(agendamento.dataExpiracaoBilhete)}%0A✉️ *E-mail:* ${encodeURIComponent(agendamento.email || '-') }%0A📍 *Província de Naturalidade:* ${encodeURIComponent(agendamento.provinciaNaturalidade)}%0A🏢 *Órgão:* ${encodeURIComponent(agendamento.orgao)}%0A💵 *Valor:* 1.000 Kz%0A%0A*DADOS DE PAGAMENTO:*%0A${encodeURIComponent(pagamentoTexto)}%0A%0AEnvio em anexo o comprovativo de pagamento para validação do agendamento e início da minha candidatura.`;
     return `https://wa.me/244928809034?text=${text}`;
   };
 
@@ -91,15 +78,16 @@ export default function PaymentStep() {
             
             <div className="space-y-2 text-xs border-b border-slate-200 pb-4 mb-4">
               <p><span className="text-slate-500 font-normal">Candidato:</span> {agendamento.nomeCompleto}</p>
+              <p><span className="text-slate-500 font-normal">Nome do Pai:</span> {agendamento.nomeCompletoPai}</p>
+              <p><span className="text-slate-500 font-normal">Nome da Mãe:</span> {agendamento.nomeCompletoMae}</p>
+              <p><span className="text-slate-500 font-normal">Data de Nascimento:</span> {agendamento.dataNascimento}</p>
+              <p><span className="text-slate-500 font-normal">Data de Emissão do Bilhete:</span> {agendamento.dataEmissaoBilhete}</p>
+              <p><span className="text-slate-500 font-normal">Data de Expiração do Bilhete:</span> {agendamento.dataExpiracaoBilhete}</p>
               <p><span className="text-slate-500 font-normal">E-mail:</span> {agendamento.email || '-'}</p>
               <p><span className="text-slate-500 font-normal">Nº de Candidatura:</span> {String(agendamento.numeroOrdem).padStart(3, '0')}</p>
               <p><span className="text-slate-500 font-normal">Nº de Fatura:</span> {agendamento.numeroFatura || '-'}</p>
               <p><span className="text-slate-500 font-normal">Província de Naturalidade:</span> {agendamento.provinciaNaturalidade}</p>
-              <p><span className="text-slate-500 font-normal">Província de Candidatura:</span> {agendamento.provinciaCandidatura}</p>
               <p><span className="text-slate-500 font-normal">Órgão:</span> {agendamento.orgao}</p>
-              <p><span className="text-slate-500 font-normal">Idade:</span> {agendamento.idade} anos</p>
-              <p><span className="text-slate-500 font-normal">Gênero:</span> {agendamento.genero}</p>
-              <p><span className="text-slate-500 font-normal">Altura:</span> {agendamento.altura.toFixed(2)} m</p>
               {agendamento.comentario && (
                 <p><span className="text-slate-500 font-normal">Comentário:</span> {agendamento.comentario}</p>
               )}
@@ -130,9 +118,7 @@ export default function PaymentStep() {
                 Detalhes
               </h2>
               <p className="text-xs text-slate-400">
-                {isMulticaixa
-                  ? 'O seu comprovativo de agendamento foi gerado com sucesso. Para concluir o processo, efetue o pagamento mediante a referência Multicaixa abaixo.'
-                  : 'O seu comprovativo de agendamento foi gerado com sucesso. O pagamento presencial refere-se exclusivamente ao serviço de apoio na realização da inscrição da candidatura.'}
+                O seu comprovativo de agendamento foi gerado com sucesso. Para concluir o processo, efetue o pagamento mediante a referência Multicaixa abaixo.
               </p>
             </div>
             <div className="flex flex-col gap-3">
@@ -147,7 +133,7 @@ export default function PaymentStep() {
                 <button
                   type="button"
                   onClick={handleDownloadPDF}
-                  className="rounded-full border border-[#FF6D00] bg-[#FF6D00] px-4 py-2 text-xs font-semibold text-white hover:bg-[#E06000] transition flex items-center gap-2"
+                  className="rounded-full border border-[#FF6D00] bg-[#FF6D00] px-4 py-2 text-xs font-semibold text-white hover:bg-[#E06000] transition duration-300 ease-out transform hover:-translate-y-0.5 hover:scale-105 shadow-[0_16px_40px_rgba(255,109,0,0.18)] animate-pulse flex items-center gap-2"
                 >
                   <FileDown className="w-3.5 h-3.5 text-white" />
                   Baixar comprovativo
@@ -187,76 +173,69 @@ export default function PaymentStep() {
                     <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.provinciaNaturalidade}</span>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Província de Candidatura</span>
-                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.provinciaCandidatura}</span>
+                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Nome do Pai</span>
+                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.nomeCompletoPai}</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Órgão</span>
-                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.orgao}</span>
+                  <div className="space-y-1">
+                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Nome da Mãe</span>
+                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.nomeCompletoMae}</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Idade</span>
-                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.idade} anos</span>
+                  <div className="space-y-1">
+                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Data de Nascimento</span>
+                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.dataNascimento}</span>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Emissão do Bilhete</span>
+                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.dataEmissaoBilhete}</span>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Expiração do Bilhete</span>
+                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.dataExpiracaoBilhete}</span>
                   </div>
                   <div>
                     <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Gênero</span>
                     <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.genero}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Altura</span>
-                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.altura.toFixed(2)} m</span>
+                    <span className="text-[10px] uppercase font-normal tracking-wider text-slate-400 block mb-0.5">Órgão</span>
+                    <span className="font-normal text-slate-800 text-xs sm:text-sm">{agendamento.orgao}</span>
                   </div>
+
                 </div>
               )}
             </div>
 
-            {isMulticaixa ? (
-              <div className="bg-white rounded-2xl p-5 md:p-6 shadow-md border border-slate-200 text-slate-900">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm text-slate-700">Número do Multicaixa Express: <span className="font-semibold text-[#FF6D00]">928 809 034</span></p>
-                    <button
-                      type="button"
-                      onClick={() => copyToClipboard('928 809 034', 'Número do Multicaixa Express')}
-                      className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 transition"
-                      title="Copiar número"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm text-slate-700">Valor a Pagar: <span className="font-semibold text-[#FF6D00]">1.000,00 Kz</span></p>
-                    <button
-                      type="button"
-                      onClick={() => copyToClipboard('1.000,00 Kz', 'Valor a pagar')}
-                      className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 transition"
-                      title="Copiar valor"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
-                  </div>
+            <div className="bg-white rounded-2xl p-5 md:p-6 shadow-md border border-slate-200 text-slate-900">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm text-slate-700">Número do Multicaixa Express: <span className="font-semibold text-[#FF6D00]">928 809 034</span></p>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard('928 809 034', 'Número do Multicaixa Express')}
+                    className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 transition"
+                    title="Copiar número"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm text-slate-700">Valor a Pagar: <span className="font-semibold text-[#FF6D00]">1.000,00 Kz</span></p>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard('1.000,00 Kz', 'Valor a pagar')}
+                    className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 transition"
+                    title="Copiar valor"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-            ) : (
-              <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow-md border border-slate-200">
-                <h3 className="text-sm font-bold text-slate-900 mb-2">Pagamento Presencial</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  O seu comprovativo de agendamento presencial foi gerado com sucesso. O pagamento efetuado refere-se exclusivamente ao serviço de apoio na realização da inscrição da candidatura.
-                </p>
-              </div>
-            )}
+            </div>
 
-            {!isPresencial ? (
-              <div className="flex gap-3 bg-white border border-orange-200 rounded-xl p-4 text-xs text-slate-600 leading-relaxed">
-                <AlertCircle className="w-5 h-5 text-[#FF6D00] shrink-0 mt-0.5" />
-                <div>{instructionsContent}</div>
-              </div>
-            ) : (
-              <div className="bg-slate-50 rounded-2xl p-5 md:p-6 shadow-md border border-slate-200">
-                <h3 className="text-sm font-bold text-slate-900 mb-2">Pagamento Presencial</h3>
-                {instructionsContent}
-              </div>
-            )}
+            <div className="flex gap-3 bg-white border border-orange-200 rounded-xl p-4 text-xs text-slate-600 leading-relaxed">
+              <AlertCircle className="w-5 h-5 text-[#FF6D00] shrink-0 mt-0.5" />
+              <div>{instructionsContent}</div>
+            </div>
 
             <div className="text-center pt-2">
               <button

@@ -1,24 +1,23 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, DollarSign, ArrowRight, Phone } from 'lucide-react';
+import { User, DollarSign, ArrowRight } from 'lucide-react';
 import { Agendamento, PROVINCIAS_ANGOLA } from '../types';
 
 export default function ScheduleStep() {
   const navigate = useNavigate();
   const [nome, setNome] = useState('');
+  const [nomeCompletoPai, setNomeCompletoPai] = useState('');
+  const [nomeCompletoMae, setNomeCompletoMae] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [dataEmissaoBilhete, setDataEmissaoBilhete] = useState('');
+  const [dataExpiracaoBilhete, setDataExpiracaoBilhete] = useState('');
   const [provinciaNaturalidade, setProvinciaNaturalidade] = useState('');
-  const [provinciaCandidatura, setProvinciaCandidatura] = useState('');
   const [orgao, setOrgao] = useState('');
-  const [idade, setIdade] = useState('');
   const [genero, setGenero] = useState('');
-  const [altura, setAltura] = useState('');
-  const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
-  const [modalidadePagamento, setModalidadePagamento] = useState<'multicaixa' | 'presencial' | ''>('');
+  const [modalidadePagamento, setModalidadePagamento] = useState<'multicaixa' | ''>('multicaixa');
   const [comentario, setComentario] = useState('');
   const [error, setError] = useState('');
-  const [alturaError, setAlturaError] = useState('');
-  const [showAlturaModal, setShowAlturaModal] = useState(false);
 
   const ORGAO_OPTIONS = [
     'Órgão Polícia Nacional',
@@ -28,38 +27,6 @@ export default function ScheduleStep() {
     'Órgão Proteção Civil e Bombeiros',
   ];
 
-  const idadeOptions = Array.from({ length: 18 }, (_, index) => index + 18);
-  const alturaOptions = Array.from({ length: 101 }, (_, index) => (1 + index * 0.01).toFixed(2));
-
-  const getAlturaMin = (currentGenero: string, currentOrgao: string) => {
-    if (currentOrgao === 'Órgão Serviço Penitenciário') {
-      return currentGenero === 'Masculino' ? 1.7 : currentGenero === 'Feminino' ? 1.6 : 0;
-    }
-    return currentGenero === 'Masculino' ? 1.65 : currentGenero === 'Feminino' ? 1.6 : 0;
-  };
-
-  const alturaMin = getAlturaMin(genero, orgao);
-
-  const validateAltura = (value: string, currentGenero: string, currentOrgao: string) => {
-    if (!currentGenero || !currentOrgao) {
-      setAlturaError('Selecione o gênero e o órgão antes de escolher a altura.');
-      return;
-    }
-
-    const numeric = parseFloat(value);
-    if (!value || isNaN(numeric)) {
-      setAlturaError('Selecione uma altura válida em metros.');
-      return;
-    }
-
-    const min = getAlturaMin(currentGenero, currentOrgao);
-    if (numeric < min) {
-      setAlturaError(`Altura mínima para ${currentGenero} no ${currentOrgao} é ${min.toFixed(2)} m.`);
-      return;
-    }
-
-    setAlturaError('');
-  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -72,32 +39,28 @@ export default function ScheduleStep() {
       setError('Por favor, introduza a Província de Naturalidade.');
       return;
     }
-    if (!provinciaCandidatura.trim()) {
-      setError('Por favor, introduza a Província de Candidatura.');
-      return;
-    }
     if (!orgao) {
       setError('Por favor, selecione o Órgão de Candidatura.');
-      return;
-    }
-    if (!idade) {
-      setError('Por favor, selecione a Idade.');
-      return;
-    }
-    if (Number(idade) < 18) {
-      setError('A idade mínima para se candidatar é 18 anos.');
       return;
     }
     if (!genero) {
       setError('Por favor, selecione o Gênero.');
       return;
     }
-    if (!modalidadePagamento) {
-      setError('Por favor, selecione a modalidade de pagamento.');
+    if (!dataNascimento.trim()) {
+      setError('Por favor, introduza a Data de Nascimento.');
       return;
     }
-    if (!telefone.trim()) {
-      setError('Por favor, introduza o seu contacto telefónico.');
+    if (!dataEmissaoBilhete.trim()) {
+      setError('Por favor, introduza a Data de Emissão do Bilhete.');
+      return;
+    }
+    if (!dataExpiracaoBilhete.trim()) {
+      setError('Por favor, introduza a Data de Expiração do Bilhete.');
+      return;
+    }
+    if (!modalidadePagamento) {
+      setError('Por favor, selecione a modalidade de pagamento.');
       return;
     }
     if (!email.trim()) {
@@ -106,16 +69,6 @@ export default function ScheduleStep() {
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError('Por favor, introduza um endereço de e-mail válido.');
-      return;
-    }
-    if (!altura.trim()) {
-      setError('Por favor, selecione a Altura.');
-      return;
-    }
-
-    const alturaNum = parseFloat(altura);
-    if (isNaN(alturaNum) || alturaNum < alturaMin) {
-      setError(`Altura mínima para ${genero} no ${orgao} é ${alturaMin.toFixed(2)} m.`);
       return;
     }
 
@@ -140,14 +93,15 @@ export default function ScheduleStep() {
     const novoAgendamento: Agendamento = {
       id: randomId,
       nomeCompleto: nome,
-      telefone: telefone.trim(),
+      nomeCompletoPai: nomeCompletoPai.trim(),
+      nomeCompletoMae: nomeCompletoMae.trim(),
+      dataNascimento: dataNascimento.trim(),
+      dataEmissaoBilhete: dataEmissaoBilhete.trim(),
+      dataExpiracaoBilhete: dataExpiracaoBilhete.trim(),
       email: email.trim(),
       provinciaNaturalidade: provinciaNaturalidade.trim(),
-      provinciaCandidatura: provinciaCandidatura.trim(),
       orgao,
-      idade: Number(idade),
       genero,
-      altura: alturaNum,
       modalidadePagamento,
       comentario: comentario.trim(),
       valor: 1000,
@@ -196,21 +150,74 @@ export default function ScheduleStep() {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-normal text-slate-600 block" htmlFor="input-telefone">
-                Contacto Telefónico
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-                  <Phone className="w-4 h-4" />
-                </span>
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="input-nome-pai">
+                  Nome Completo do Pai
+                </label>
                 <input
-                  id="input-telefone"
-                  type="tel"
-                  value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
-                  placeholder="Insira o seu número de telefone"
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all text-sm text-slate-900"
+                  id="input-nome-pai"
+                  type="text"
+                  value={nomeCompletoPai}
+                  onChange={(e) => setNomeCompletoPai(e.target.value)}
+                  placeholder="Insira o nome completo do pai"
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="input-nome-mae">
+                  Nome Completo da Mãe
+                </label>
+                <input
+                  id="input-nome-mae"
+                  type="text"
+                  value={nomeCompletoMae}
+                  onChange={(e) => setNomeCompletoMae(e.target.value)}
+                  placeholder="Insira o nome completo da mãe"
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="input-data-nascimento">
+                  Data de Nascimento
+                </label>
+                <input
+                  id="input-data-nascimento"
+                  type="date"
+                  value={dataNascimento}
+                  onChange={(e) => setDataNascimento(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="input-data-emissao-bilhete">
+                  Data de Emissão do Bilhete
+                </label>
+                <input
+                  id="input-data-emissao-bilhete"
+                  type="date"
+                  value={dataEmissaoBilhete}
+                  onChange={(e) => setDataEmissaoBilhete(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-normal text-slate-600 block" htmlFor="input-data-expiracao-bilhete">
+                  Data de Expiração do Bilhete
+                </label>
+                <input
+                  id="input-data-expiracao-bilhete"
+                  type="date"
+                  value={dataExpiracaoBilhete}
+                  onChange={(e) => setDataExpiracaoBilhete(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00] focus:bg-white transition-all"
                   required
                 />
               </div>
@@ -231,17 +238,17 @@ export default function ScheduleStep() {
               />
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-5">
               <div className="space-y-1.5">
                 <label className="text-xs font-normal text-slate-600 block" htmlFor="input-provincia-naturalidade">
-                  Província de Naturalidade
+                  Província de Naturalidade (21 províncias oficiais)
                 </label>
                 <input
                   id="input-provincia-naturalidade"
                   list="provincias-options"
                   value={provinciaNaturalidade}
                   onChange={(e) => setProvinciaNaturalidade(e.target.value)}
-                  placeholder="Digite ou selecione a província"
+                  placeholder="Digite ou selecione uma das 21 províncias oficiais"
                   className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
                   required
                 />
@@ -251,42 +258,9 @@ export default function ScheduleStep() {
                   ))}
                 </datalist>
               </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-normal text-slate-600 block" htmlFor="input-provincia-candidatura">
-                  Província de Candidatura
-                </label>
-                <input
-                  id="input-provincia-candidatura"
-                  list="provincias-options"
-                  value={provinciaCandidatura}
-                  onChange={(e) => setProvinciaCandidatura(e.target.value)}
-                  placeholder="Digite ou selecione a província"
-                  className="w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
-                  required
-                />
-              </div>
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
-              <div className="space-y-1.5">
-                <label className="text-xs font-normal text-slate-600 block" htmlFor="select-idade">
-                  Idade
-                </label>
-                <select
-                  id="select-idade"
-                  value={idade}
-                  onChange={(e) => setIdade(e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
-                  required
-                >
-                  <option value="" disabled>Selecione a idade</option>
-                  {idadeOptions.map((option) => (
-                    <option key={option} value={option}>{option} anos</option>
-                  ))}
-                </select>
-              </div>
-
               <div className="space-y-1.5">
                 <label className="text-xs font-normal text-slate-600 block" htmlFor="select-orgao">
                   Órgão
@@ -294,12 +268,7 @@ export default function ScheduleStep() {
                 <select
                   id="select-orgao"
                   value={orgao}
-                  onChange={(e) => {
-                    setOrgao(e.target.value);
-                    if (altura) {
-                      validateAltura(altura, genero, e.target.value);
-                    }
-                  }}
+                  onChange={(e) => setOrgao(e.target.value)}
                   className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
                   required
                 >
@@ -322,12 +291,7 @@ export default function ScheduleStep() {
                         name="genero"
                         value={option}
                         checked={genero === option}
-                        onChange={(e) => {
-                          setGenero(e.target.value);
-                          if (altura) {
-                            validateAltura(altura, e.target.value, orgao);
-                          }
-                        }}
+                        onChange={(e) => setGenero(e.target.value)}
                         className="h-4 w-4 text-[#FF6D00] accent-[#FF6D00]"
                         required
                       />
@@ -338,63 +302,6 @@ export default function ScheduleStep() {
               </div>
             </div>
 
-            <div className="space-y-1.5 relative">
-              <label className="text-xs font-normal text-slate-600 block" htmlFor="input-altura">
-                Altura (metros)
-              </label>
-              <button
-                type="button"
-                id="input-altura"
-                onClick={() => {
-                  setShowAlturaModal(true);
-                  setError('');
-                }}
-                className="w-full text-left rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-sm text-slate-900 focus:outline-hidden focus:ring-4 focus:ring-[#FF6D00]/10 focus:border-[#FF6D00]"
-              >
-                {altura ? `${parseFloat(altura).toFixed(2)} m` : 'Clique para selecionar a altura'}
-              </button>
-              {alturaError && (
-                <p className="text-xs text-rose-600">{alturaError}</p>
-              )}
-
-              {showAlturaModal && (
-                <div className="absolute z-20 left-0 right-0 mt-2 max-h-64 overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-xl p-3">
-                  {!genero || !orgao ? (
-                    <div className="text-sm text-slate-500">
-                      Selecione primeiro o gênero e o órgão para ver as alturas disponíveis.
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-3 gap-2">
-                      {alturaOptions
-                        .filter((value) => parseFloat(value) >= alturaMin)
-                        .map((value) => (
-                          <button
-                            key={value}
-                            type="button"
-                            onClick={() => {
-                              setAltura(value);
-                              validateAltura(value, genero, orgao);
-                              setShowAlturaModal(false);
-                            }}
-                            className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-xs text-slate-700 hover:bg-[#FF6D00] hover:text-white transition"
-                          >
-                            {value} m
-                          </button>
-                        ))}
-                    </div>
-                  )}
-                  <div className="mt-3 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={() => setShowAlturaModal(false)}
-                      className="text-xs text-slate-500 hover:text-slate-900"
-                    >
-                      Fechar
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-normal text-slate-600 block">
@@ -407,23 +314,11 @@ export default function ScheduleStep() {
                     name="modalidadePagamento"
                     value="multicaixa"
                     checked={modalidadePagamento === 'multicaixa'}
-                    onChange={(e) => setModalidadePagamento(e.target.value as 'multicaixa' | 'presencial')}
+                    onChange={(e) => setModalidadePagamento('multicaixa')}
                     className="h-4 w-4 text-[#FF6D00] accent-[#FF6D00]"
                     required
                   />
                   Pagamento Multicaixa Express (online)
-                </label>
-                <label className="inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="modalidadePagamento"
-                    value="presencial"
-                    checked={modalidadePagamento === 'presencial'}
-                    onChange={(e) => setModalidadePagamento(e.target.value as 'multicaixa' | 'presencial')}
-                    className="h-4 w-4 text-[#FF6D00] accent-[#FF6D00]"
-                    required
-                  />
-                  Pagamento Presencial (no local)
                 </label>
               </div>
             </div>

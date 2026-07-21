@@ -1,15 +1,16 @@
 export interface Agendamento {
   id: string;
   nomeCompleto: string;
-  telefone?: string;
+  nomeCompletoPai: string;
+  nomeCompletoMae: string;
+  dataNascimento: string;
+  dataEmissaoBilhete: string;
+  dataExpiracaoBilhete: string;
   email?: string;
   provinciaNaturalidade: string;
-  provinciaCandidatura: string;
   orgao: string;
-  idade: number;
   genero: string;
-  altura: number;
-  modalidadePagamento: 'multicaixa' | 'presencial';
+  modalidadePagamento: 'multicaixa';
   comentario?: string;
   valor: number;
   dataCriacao: string;
@@ -25,6 +26,7 @@ export const PROVINCIAS_ANGOLA = [
   'Bengo',
   'Benguela',
   'Bié',
+  'Cabinda',
   'Cuando',
   'Cubango',
   'Cuanza Norte',
@@ -32,10 +34,13 @@ export const PROVINCIAS_ANGOLA = [
   'Cunene',
   'Huambo',
   'Huíla',
+  'Icolo e Bengo',
+  'Luanda',
   'Lunda Norte',
   'Lunda Sul',
   'Malanje',
   'Moxico',
+  'Moxico Leste',
   'Namibe',
   'Uíge',
   'Zaire'
