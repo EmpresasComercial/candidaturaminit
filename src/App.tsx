@@ -21,6 +21,7 @@ import { ResultScreen } from "./components/ResultScreen";
 import { Dashboard } from "./components/Dashboard";
 import { RankingPage } from "./components/RankingComponent";
 import { AdminPanel } from "./components/AdminPanel";
+import { InvestmentPlans } from "./components/InvestmentPlans";
 
 // Legacy components (kept for reference)
 const HomeStep = lazyWithPreload(() => import("./components/HomeStep"));
@@ -100,6 +101,7 @@ function AppContent() {
             <Route path="/" element={<HomeStep />} />
             <Route path="/simulados" element={<Navigate to="/simulado" replace />} />
             <Route path="/ranking" element={<RankingPage />} />
+            <Route path="/planos" element={<InvestmentPlans />} />
 
             <Route path="/agendar" element={<HomeStep />} />
             <Route path="/agendamento" element={<ScheduleStep />} />

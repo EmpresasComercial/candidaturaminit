@@ -304,10 +304,10 @@ export function ResultScreen() {
           </button>
 
           <button
-            onClick={() => navigate("/simulado")}
+            onClick={() => navigate("/")}
             className="flex items-center justify-center gap-2 bg-yellow-400 text-slate-950 py-3 px-4 font-bold hover:bg-yellow-500 transition-all"
           >
-            Novo Simulado
+            Voltar para Início
             <ArrowRight className="w-5 h-5" />
           </button>
         </motion.div>

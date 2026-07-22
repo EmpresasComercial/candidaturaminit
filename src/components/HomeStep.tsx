@@ -41,8 +41,11 @@ export default function HomeStep() {
                   Iniciar Prova
                   <ArrowRight className="w-5 h-5" />
                 </button>
-                <button className="inline-flex items-center justify-center rounded-full bg-white/5 px-6 py-4 text-base font-semibold text-white transition hover:bg-white/10">
-                  Consultar requisitos
+                <button
+                  onClick={() => navigate('/planos')}
+                  className="inline-flex items-center justify-center rounded-full bg-white/5 px-6 py-4 text-base font-semibold text-white transition hover:bg-white/10"
+                >
+                  Consultar Planos
                 </button>
               </div>
 
