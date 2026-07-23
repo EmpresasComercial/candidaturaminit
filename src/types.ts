@@ -2,6 +2,8 @@
 export interface User {
   id: string;
   email: string;
+  phone?: string;
+  password?: string;
   full_name: string;
   avatar_url?: string;
   active_plan?: "iniciante" | "medio" | "pro";
@@ -14,12 +16,17 @@ export type CategoryType =
   | "Língua Portuguesa"
   | "Matemática"
   | "Cultura Geral"
+  | "Conhecimentos Gerais"
   | "História de Angola"
   | "Constituição"
   | "Direitos Humanos"
   | "Atualidades"
   | "Informática"
-  | "Raciocínio Lógico";
+  | "Raciocínio Lógico"
+  | "Polícia Nacional"
+  | "Bombeiros"
+  | "Serviços Penitenciários"
+  | "Serviço de Investigação Criminal";
 
 export interface Category {
   id: string;
@@ -98,6 +105,16 @@ export interface History {
   total_questions: number;
   classification: Classification;
   time_spent_seconds: number;
+  created_at: string;
+}
+
+export interface SubscriptionHistory {
+  id: string;
+  user_id: string;
+  plan: "iniciante" | "medio" | "pro";
+  amount: number;
+  reference_code: string;
+  payment_number: string;
   created_at: string;
 }
 

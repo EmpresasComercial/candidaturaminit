@@ -20,7 +20,6 @@ export default defineConfig(() => {
     },
     build: {
       target: 'es2020',
-      minify: 'esbuild',
       cssCodeSplit: true,
       sourcemap: false,
       emptyOutDir: true,

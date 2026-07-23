@@ -34,7 +34,7 @@ interface AuthStore {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthStore>(
+export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       user: null,
@@ -73,7 +73,7 @@ interface SimulationStore {
   getSession: () => SimulationSession | null;
 }
 
-export const useSimulationStore = create<SimulationStore>(
+export const useSimulationStore = create<SimulationStore>()(
   persist(
     (set, get) => ({
       currentSession: null,
@@ -92,16 +92,16 @@ export const useSimulationStore = create<SimulationStore>(
         if (!currentSession) return;
 
         const question = currentSession.questions.find((q) => q.id === questionId);
-        const isCorrect = answer === question?.correctAnswer;
+        const isCorrect = answer === question?.correct_answer;
 
         const newAnswer: SimulationAnswer = {
           id: `ans_${Date.now()}`,
-          simulationId: currentSession.id,
-          questionId,
-          userAnswer: answer,
-          isCorrect,
-          timeSpentSeconds: timeSpent,
-          answeredAt: new Date().toISOString(),
+          simulation_id: currentSession.id,
+          question_id: questionId,
+          user_answer: answer !== null ? answer : undefined,
+          is_correct: isCorrect,
+          time_spent_seconds: timeSpent,
+          answered_at: new Date().toISOString(),
         };
 
         set((state) => ({
@@ -111,10 +111,10 @@ export const useSimulationStore = create<SimulationStore>(
 
       getCurrentQuestion: () => {
         const { currentSession } = get();
-        if (!currentSession || currentSession.currentQuestionIndex >= currentSession.questions.length) {
+        if (!currentSession || currentSession.current_question_index >= currentSession.questions.length) {
           return null;
         }
-        return currentSession.questions[currentSession.currentQuestionIndex];
+        return currentSession.questions[currentSession.current_question_index];
       },
 
       moveToNextQuestion: () => {
@@ -123,7 +123,7 @@ export const useSimulationStore = create<SimulationStore>(
             return {
               currentSession: {
                 ...state.currentSession,
-                currentQuestionIndex: state.currentSession.currentQuestionIndex + 1,
+                current_question_index: state.currentSession.current_question_index + 1,
               },
             };
           }
@@ -154,7 +154,7 @@ interface StatisticsStore {
   updateGameification: (userId: string, updates: Partial<UserGameification>) => void;
 }
 
-export const useStatisticsStore = create<StatisticsStore>(
+export const useStatisticsStore = create<StatisticsStore>()(
   persist(
     (set) => ({
       stats: null,
@@ -229,7 +229,7 @@ export const useQuestionsStore = create<QuestionsStore>((set, get) => ({
     set({ questions });
   },
   getQuestionsByCategory: (categoryId: string) => {
-    return get().questions.filter((q) => q.categoryId === categoryId);
+    return get().questions.filter((q) => q.category_id === categoryId);
   },
   addQuestion: (question: Question) => {
     questionStorage.add(question);

@@ -15,7 +15,7 @@ import {
   getClassificationIcon,
 } from "../lib/utils";
 
-export function ResultScreen() {
+export function ResultPage() {
   const location = useLocation();
   const navigate = useNavigate();
 

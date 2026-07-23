@@ -1,9 +1,13 @@
+import { useState } from "react";
+import { Copy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../lib/store";
+import { subscriptionStorage } from "../lib/localStorage";
 
-export function InvestmentPlans() {
+export function PlansPage() {
   const navigate = useNavigate();
   const { user, setUser } = useAuthStore();
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const activatePlan = (plan: "iniciante" | "medio" | "pro") => {
     if (!user) {
@@ -17,6 +21,15 @@ export function InvestmentPlans() {
       updated_at: new Date().toISOString(),
     });
     navigate("/simulado");
+  };
+
+  const handleConfirmSubscription = () => {
+    activatePlan("iniciante");
+    setShowPaymentModal(false);
+  };
+
+  const handleInicianteClick = () => {
+    setShowPaymentModal(true);
   };
 
   return (
@@ -59,10 +72,10 @@ export function InvestmentPlans() {
             </div>
             <button
               type="button"
-              onClick={() => activatePlan("iniciante")}
+              onClick={handleInicianteClick}
               className="mt-6 w-full rounded-full bg-yellow-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-md shadow-yellow-500/20 transition hover:bg-yellow-400"
             >
-              Comprar Plano Iniciante
+              Assinar Plano Iniciante
             </button>
           </div>
 
@@ -113,6 +126,76 @@ export function InvestmentPlans() {
             </button>
           </div>
         </div>
+
+        {showPaymentModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="w-full max-w-md rounded-[2rem] bg-white p-6 text-slate-900 shadow-2xl">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Assinar Plano Iniciante</p>
+                  <h2 className="mt-2 text-2xl font-bold text-slate-900">Referência de Pagamento</h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPaymentModal(false)}
+                  className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-300"
+                >
+                  Fechar
+                </button>
+              </div>
+
+              <p className="mb-6 text-slate-600">
+                Para assinar o Plano Iniciante, utilize os dados abaixo no pagamento.
+              </p>
+
+              <div className="space-y-4 rounded-3xl bg-slate-50 p-5 text-slate-900 shadow-sm">
+                <div className="flex items-center justify-between gap-3 rounded-3xl bg-yellow-50 p-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Código de referência</p>
+                    <p className="mt-2 text-3xl font-semibold">00930</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard.writeText("00930")}
+                    className="inline-flex items-center gap-2 rounded-full bg-yellow-500 px-3 py-2 text-sm font-semibold text-slate-950 transition hover:bg-yellow-400"
+                  >
+                    <Copy className="h-4 w-4" /> Copiar
+                  </button>
+                </div>
+                <div className="flex items-center justify-between gap-3 rounded-3xl bg-yellow-50 p-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Número de pagamento</p>
+                    <p className="mt-2 text-3xl font-semibold">928809034</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard.writeText("928809034")}
+                    className="inline-flex items-center gap-2 rounded-full bg-yellow-500 px-3 py-2 text-sm font-semibold text-slate-950 transition hover:bg-yellow-400"
+                  >
+                    <Copy className="h-4 w-4" /> Copiar
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={handleConfirmSubscription}
+                  className="w-full rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                >
+                  Confirmar Assinatura
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPaymentModal(false)}
+                  className="w-full rounded-full bg-slate-200 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-300"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

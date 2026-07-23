@@ -3,7 +3,7 @@
  * Todos os dados são salvos localmente no navegador.
  */
 
-import type { User, Category, Question, Simulation, History, UserStatistics, UserGameification, SimulationAnswer } from "../types";
+import type { User, Category, Question, Simulation, History, UserStatistics, UserGameification, SimulationAnswer, SubscriptionHistory } from "../types";
 
 const STORAGE_KEYS = {
   USER: "minint_user",
@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
   QUESTIONS: "minint_questions",
   SIMULATIONS: "minint_simulations",
   HISTORY: "minint_history",
+  SUBSCRIPTIONS: "minint_subscriptions",
   STATISTICS: "minint_statistics",
   GAMIFICATION: "minint_gamification",
   ANSWERS: "minint_answers",
@@ -275,6 +276,29 @@ export const historyStorage = {
     const items = historyStorage.getAll();
     items.push(history);
     localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(items));
+  },
+};
+
+// ============ SUBSCRIPTIONS ============
+
+export const subscriptionStorage = {
+  getAll: (): SubscriptionHistory[] => {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.SUBSCRIPTIONS);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  },
+
+  getByUser: (userId: string): SubscriptionHistory[] => {
+    return subscriptionStorage.getAll().filter((item) => item.user_id === userId);
+  },
+
+  add: (subscription: SubscriptionHistory) => {
+    const items = subscriptionStorage.getAll();
+    items.push(subscription);
+    localStorage.setItem(STORAGE_KEYS.SUBSCRIPTIONS, JSON.stringify(items));
   },
 };
 

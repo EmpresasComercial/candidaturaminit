@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
-export default function HomeStep() {
+export default function HomePage() {
   const navigate = useNavigate();
 
   return (

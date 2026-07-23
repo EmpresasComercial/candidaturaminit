@@ -15,18 +15,16 @@ function lazyWithPreload<T extends ComponentType<any>>(
   return Component;
 }
 
-// Components
-import { QuizPage } from "./components/QuizPage";
-import { ResultScreen } from "./components/ResultScreen";
-import { Dashboard } from "./components/Dashboard";
-import { RankingPage } from "./components/RankingComponent";
-import { AdminPanel } from "./components/AdminPanel";
-import { InvestmentPlans } from "./components/InvestmentPlans";
+const QuizPage = lazyWithPreload(() => import("./components/QuizPage").then(module => ({ default: module.QuizPage })));
+const ResultPage = lazyWithPreload(() => import("./components/ResultPage").then(module => ({ default: module.ResultPage })));
+const DashboardPage = lazyWithPreload(() => import("./components/DashboardPage").then(module => ({ default: module.DashboardPage })));
+const RankingPage = lazyWithPreload(() => import("./components/RankingPage").then(module => ({ default: module.RankingPage })));
+const AdminPage = lazyWithPreload(() => import("./components/AdminPage").then(module => ({ default: module.AdminPage })));
+const PlansPage = lazyWithPreload(() => import("./components/PlansPage").then(module => ({ default: module.PlansPage })));
 
-// Legacy components (kept for reference)
-const HomeStep = lazyWithPreload(() => import("./components/HomeStep"));
-const ScheduleStep = lazyWithPreload(() => import("./components/ScheduleStep"));
-const PaymentStep = lazyWithPreload(() => import("./components/PaymentStep"));
+const HomePage = lazyWithPreload(() => import("./components/HomePage"));
+const SchedulePage = lazyWithPreload(() => import("./components/SchedulePage"));
+const PaymentPage = lazyWithPreload(() => import("./components/PaymentPage"));
 
 function LoadingFallback() {
   return (
@@ -98,20 +96,18 @@ function AppContent() {
       <main className="flex-1 w-full">
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
-            <Route path="/" element={<HomeStep />} />
-            <Route path="/simulados" element={<Navigate to="/simulado" replace />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/ranking" element={<RankingPage />} />
-            <Route path="/planos" element={<InvestmentPlans />} />
+            <Route path="/planos" element={<PlansPage />} />
 
-            <Route path="/agendar" element={<HomeStep />} />
-            <Route path="/agendamento" element={<ScheduleStep />} />
-            <Route path="/pagamento" element={<PaymentStep />} />
+            <Route path="/agendar" element={<SchedulePage />} />
+            <Route path="/pagamento" element={<PaymentPage />} />
 
             <Route
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Dashboard
+                  <DashboardPage
                     history={[]}
                     statistics={null}
                     userName={user?.full_name || "Usuário"}
@@ -133,16 +129,16 @@ function AppContent() {
               path="/resultado"
               element={
                 <ProtectedRoute>
-                  <ResultScreen />
+                  <ResultPage />
                 </ProtectedRoute>
               }
             />
 
             <Route
-              path="/admin/questoes"
+              path="/admin"
               element={
                 <ProtectedRoute>
-                  <AdminPanel isAdmin={true} />
+                  <AdminPage isAdmin={true} />
                 </ProtectedRoute>
               }
             />

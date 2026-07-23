@@ -10,7 +10,7 @@ interface RankingComponentProps {
   showTopOnly?: boolean;
 }
 
-export function RankingComponent({
+export function RankingList({
   limit = 50,
   currentUserId,
   showTopOnly = false,
@@ -277,7 +277,7 @@ export function RankingPage() {
 
         {/* Ranking Table */}
         <motion.div variants={item} className="bg-white rounded-lg shadow">
-          <RankingComponent limit={100} showTopOnly={false} />
+          <RankingList limit={100} showTopOnly={false} />
         </motion.div>
       </div>
     </motion.div>

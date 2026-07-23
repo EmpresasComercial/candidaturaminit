@@ -7,7 +7,7 @@ import {
 import { Agendamento } from '../types';
 import EmblemAngola from './EmblemAngola';
 
-export default function PaymentStep() {
+export default function PaymentPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const agendamento = (location.state as { agendamento?: Agendamento })?.agendamento;

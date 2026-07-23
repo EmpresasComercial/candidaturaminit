@@ -18,7 +18,7 @@ interface DashboardProps {
   userName: string;
 }
 
-export function Dashboard({ history, statistics, userName }: DashboardProps) {
+export function DashboardPage({ history, statistics, userName }: DashboardProps) {
   // Calculate trend data (last 10 simulations)
   const trendData = useMemo(() => {
     return history

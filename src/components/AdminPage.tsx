@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Edit2, Trash2, Search, Download, Upload, Copy } from "lucide-react";
@@ -20,7 +20,7 @@ interface QuestionFormData {
   difficulty_level: "fácil" | "médio" | "difícil";
 }
 
-export function AdminPanel({ isAdmin }: AdminPanelProps) {
+export function AdminPage({ isAdmin }: AdminPanelProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [filterDifficulty, setFilterDifficulty] = useState("all");
@@ -119,7 +119,7 @@ export function AdminPanel({ isAdmin }: AdminPanelProps) {
     setShowForm(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     if (!formData.category_id || !formData.question_text) {

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { User, DollarSign, ArrowRight } from 'lucide-react';
 import { Agendamento, PROVINCIAS_ANGOLA } from '../types';
 
-export default function ScheduleStep() {
+export default function SchedulePage() {
   const navigate = useNavigate();
   const [nome, setNome] = useState('');
   const [nomeCompletoPai, setNomeCompletoPai] = useState('');
